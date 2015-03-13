@@ -49,6 +49,7 @@ Eval compute in 3 * 5.
 Eval compute in 3+5*6.
 
 Fixpoint factorial (n:nat) : nat := 
+<<<<<<< HEAD
   match n with
   | O => 1
   | S n' => (S n') * (factorial n')
