@@ -11,10 +11,6 @@ Qed.
 (** [] *)
 
 
-
-
-
-
 (** **** Problem #2 : 1 star (zero_nbeq_plus_1) *)
 Fixpoint beq_nat (n m : nat) : bool :=
   match n with
