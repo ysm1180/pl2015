@@ -51,7 +51,11 @@ Inductive ev : nat -> Prop :=
 Theorem double_even : forall n,
   ev (double n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction n.
+  simpl. apply ev_0.
+  simpl. apply ev_SS. apply IHn.
+Qed.
 (** [] *)
 
 
@@ -193,13 +197,25 @@ Qed.
 (** **** Exercise: 2 stars (b_times2)  *)
 Theorem b_times2: forall n, beautiful n -> beautiful (2*n).
 Proof.
-    (* FILL IN HERE *) Admitted.
+  intros.
+  simpl. apply b_sum with (n:=n) (m:=n+0).
+  apply H.
+  apply b_sum with (n:=n) (m:=0).
+  apply H.
+  apply b_0.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (b_timesm)  *)
 Theorem b_timesm: forall n m, beautiful n -> beautiful (m*n).
 Proof.
-   (* FILL IN HERE *) Admitted.
+  intros.
+  induction m.
+  simpl. apply b_0.
+  simpl. apply b_sum with (n:=n) (m:=m*n).
+  apply H.
+  apply IHm.
+Qed.
 (** [] *)
 
 
@@ -253,7 +269,12 @@ Inductive gorgeous : nat -> Prop :=
 Theorem gorgeous_plus13: forall n, 
   gorgeous n -> gorgeous (13+n).
 Proof.
-   (* FILL IN HERE *) Admitted.
+  intros.
+  apply g_plus5 with (n:=8+n).
+  apply g_plus5 with (n:=3+n).
+  apply g_plus3 with (n:=n).
+  apply H.
+Qed.
 (** [] *)
 
 (** *** *)
@@ -306,13 +327,29 @@ Qed.
 Theorem gorgeous_sum : forall n m,
   gorgeous n -> gorgeous m -> gorgeous (n + m).
 Proof.
- (* FILL IN HERE *) Admitted.
+  intros.
+  induction H.
+  simpl. apply H0.
+  apply g_plus3 with (n:=n+m).
+  apply IHgorgeous.
+  apply g_plus5 with (n:=n+m).
+  apply IHgorgeous.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (beautiful__gorgeous)  *)
 Theorem beautiful__gorgeous : forall n, beautiful n -> gorgeous n.
 Proof.
- (* FILL IN HERE *) Admitted.
+  intros.
+  induction H.
+  apply g_0.
+  apply g_plus3. apply g_0.
+  apply g_plus5. apply g_0.
+  apply gorgeous_sum.
+  apply IHbeautiful1.
+  apply IHbeautiful2.
+Qed.
+
 (** [] *)
 
 
@@ -324,13 +361,24 @@ Proof.
 
 Lemma helper_g_times2 : forall x y z, x + (z + y) = z + x + y.
 Proof.
-   (* FILL IN HERE *) Admitted.
+  intros.
+  rewrite -> plus_swap.
+  rewrite -> plus_assoc.
+  reflexivity.
+Qed.
 
 Theorem g_times2: forall n, gorgeous n -> gorgeous (2*n).
 Proof.
    intros n H. simpl. 
    induction H.
-   (* FILL IN HERE *) Admitted.
+   simpl. apply g_0.
+   apply g_plus3 with (n:=n+(3+n+0)).
+   rewrite helper_g_times2. apply g_plus3 with (n:=n+n+0).
+   rewrite <- helper_g_times2. apply IHgorgeous.
+   apply g_plus5 with (n:=n+(5+n+0)).
+   rewrite helper_g_times2. apply g_plus5 with (n:=n+n+0).
+   rewrite <- helper_g_times2. apply IHgorgeous.
+Qed.
 (** [] *)
 
 
@@ -381,7 +429,11 @@ Qed.
 Theorem ev_sum : forall n m,
    ev n -> ev m -> ev (n+m).
 Proof. 
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction H.
+  simpl. apply H0.
+  simpl. apply ev_SS. apply IHev.
+Qed.
 (** [] *)
 
 
@@ -460,7 +512,11 @@ Proof.
 Theorem SSSSev__even : forall n,
   ev (S (S (S (S n)))) -> ev n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  inversion H.
+  inversion H1.
+  apply H3.
+Qed.
 
 (** The [inversion] tactic can also be used to derive goals by showing
     the absurdity of a hypothesis. *)
@@ -468,7 +524,11 @@ Proof.
 Theorem even5_nonsense : 
   ev 5 -> 2 + 2 = 9.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  inversion H.
+  inversion H1.
+  inversion H3.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (ev_ev__ev)  *)
@@ -478,7 +538,10 @@ Proof.
 Theorem ev_ev__ev : forall n m,
   ev (n+m) -> ev n -> ev m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction H0. simpl in H.
+  apply H. inversion H. apply IHev in H2. apply H2.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (ev_plus_plus)  *)
@@ -486,10 +549,16 @@ Proof.
     induction or even case analysis is needed, but some of the rewriting
     may be tedious. *)
 
+
 Theorem ev_plus_plus : forall n m p,
   ev (n+m) -> ev (n+p) -> ev (m+p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  apply ev_sum with (n:=n+m) (m:=n+p) in H.
+  rewrite -> plus_swap in H. rewrite -> plus_assoc in H. rewrite -> plus_assoc in H.
+  apply ev_ev__ev with (m:=m+p) in H.
+  apply H. rewrite -> plus_assoc.
+Abort.
 (** [] *)
 
 
@@ -706,7 +775,11 @@ Inductive next_even : nat -> nat -> Prop :=
 
 Lemma le_trans : forall m n o, m <= n -> n <= o -> m <= o.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction H0.
+  apply H.
+  apply le_S. apply IHle.
+Qed.
 
 Theorem O_le_n : forall n,
   0 <= n.

@@ -238,7 +238,12 @@ Theorem and_assoc : forall P Q R : Prop,
 Proof.
   intros P Q R H.
   destruct H as [HP [HQ HR]].
-(* FILL IN HERE *) Admitted.
+  split.
+  split.
+  apply HP.
+  apply HQ.
+  apply HR.
+Qed.
 (** [] *)
 
 
@@ -277,13 +282,29 @@ Proof.
 
 Theorem iff_refl : forall P : Prop, 
   P <-> P.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof.
+  intros.
+  split.
+  intros.
+  apply H.
+  intros.
+  apply H.
+Qed.
 
 Theorem iff_trans : forall P Q R : Prop, 
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  destruct H as [HPQ HQP].
+  destruct H0 as [HQR HRQ].
+  split.
+  intros.
+  apply HQR. apply HPQ. apply H.
+  intros.
+  apply HQP. apply HRQ. apply H.
+Qed.
+  
+
 
 (** Hint: If you have an iff hypothesis in the context, you can use
     [inversion] to break it into two separate implications.  (Think
@@ -377,14 +398,29 @@ Proof.
 Theorem or_distributes_over_and_2 : forall P Q R : Prop,
   (P \/ Q) /\ (P \/ R) -> P \/ (Q /\ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  destruct H as [[HP | HQ] [HP2 | HR]].
+  left. apply HP.
+  left. apply HP.
+  left. apply HP2.
+  right. split. apply HQ. apply HR.
+Qed.
+  
 (** [] *)
 
 (** **** Exercise: 1 star, optional (or_distributes_over_and)  *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  split.
+  intros. destruct H as [HP | [HQ HR]].
+  split. left. apply HP.
+  left. apply HP.
+  split. right. apply HQ.
+  right. apply HR.
+  apply or_distributes_over_and_2.
+Qed.
 (** [] *)
 
 (* ################################################### *)
@@ -421,20 +457,39 @@ Proof.
 (** **** Exercise: 2 stars, optional (andb_false)  *)
 Theorem andb_false : forall b c,
   andb b c = false -> b = false \/ c = false.
-Proof. 
-  (* FILL IN HERE *) Admitted.
-
+Proof.
+  intros.
+  destruct b.
+  destruct c.
+  inversion H.
+  right. reflexivity.
+  left. reflexivity.
+Qed.
 (** **** Exercise: 2 stars, optional (orb_false)  *)
 Theorem orb_prop : forall b c,
   orb b c = true -> b = true \/ c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  destruct b.
+  left. reflexivity.
+  destruct c.
+  right. reflexivity.
+  inversion H.
+Qed.
 
 (** **** Exercise: 2 stars, optional (orb_false_elim)  *)
 Theorem orb_false_elim : forall b c,
   orb b c = false -> b = false /\ c = false.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof.
+  intros.
+  destruct b.
+  inversion H.
+  destruct c.
+  inversion H.
+  split. reflexivity.
+  reflexivity.
+Qed.
+
 (** [] *)
 
 
