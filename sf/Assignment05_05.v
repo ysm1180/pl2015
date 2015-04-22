@@ -7,6 +7,7 @@ Require Export Assignment05_04.
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
+<<<<<<< HEAD
   intros.
   split. intros.
   destruct H as [HP | [HQ HR]].
@@ -22,6 +23,9 @@ Proof.
   right. split.
   apply HQ.
   apply HR.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 (** [] *)
 

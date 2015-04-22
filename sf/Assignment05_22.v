@@ -8,10 +8,14 @@ Require Export Assignment05_21.
 Theorem SSSSev__even : forall n,
   ev (S (S (S (S n)))) -> ev n.
 Proof.
+<<<<<<< HEAD
   intros.
   inversion H as [| n' H'].
   inversion H' as [| n'' H''].
   apply H''.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 
 (** The [inversion] tactic can also be used to derive goals by showing

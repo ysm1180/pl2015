@@ -13,9 +13,13 @@ Require Export Assignment05_28.
 
 Lemma le_trans : forall m n o, m <= n -> n <= o -> m <= o.
 Proof.
+<<<<<<< HEAD
   intros.
   induction H0.
   apply H.
   apply le_S. apply IHle. apply H.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 

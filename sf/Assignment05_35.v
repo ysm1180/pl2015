@@ -6,8 +6,12 @@ Theorem lt_S : forall n m,
   n < m ->
   n < S m.
 Proof.
+<<<<<<< HEAD
   unfold lt.
   intros.
   apply le_S. apply H.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 

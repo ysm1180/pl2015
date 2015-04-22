@@ -8,6 +8,7 @@ Require Export Assignment05_12.
 Theorem beq_nat_false : forall n m,
   beq_nat n m = false -> n <> m.
 Proof.
+<<<<<<< HEAD
   intros.
   unfold not.
   generalize dependent m.
@@ -18,6 +19,9 @@ Proof.
   intros. induction m.
   inversion H0.
   inversion H. apply IHn in H2. apply H2. inversion H0. reflexivity.  
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 (** [] *)
 

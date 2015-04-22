@@ -7,12 +7,16 @@ Require Export Assignment05_05.
 Theorem orb_prop : forall b c,
   orb b c = true -> b = true \/ c = true.
 Proof.
+<<<<<<< HEAD
   intros.
   destruct b.
   left. reflexivity.
   destruct c.
   right. reflexivity.
   inversion H.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 
 

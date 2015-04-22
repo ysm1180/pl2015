@@ -7,6 +7,7 @@ Theorem le_ble_nat : forall n m,
   ble_nat n m = true.
 Proof.
   (* Hint: This may be easiest to prove by induction on [m]. *)
+<<<<<<< HEAD
   intros.
   generalize dependent n.
   induction m.
@@ -16,5 +17,8 @@ Proof.
   intros. destruct n.
   simpl. reflexivity.
   apply IHm. apply Sn_le_Sm__n_le_m. apply H.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 

@@ -6,6 +6,7 @@ Require Export Assignment05_11.
 
 
 (** 2 stars (false_beq_nat)  *)
+<<<<<<< HEAD
 
 Lemma ex_falso : forall P : Prop,
   False -> P.
@@ -14,10 +15,13 @@ Proof.
   inversion H.
 Qed.
 
+=======
+>>>>>>> upstream/master
 Theorem false_beq_nat : forall n m : nat,
      n <> m ->
      beq_nat n m = false.
 Proof.
+<<<<<<< HEAD
   intros.
   unfold not in H.
   generalize dependent n.
@@ -26,6 +30,9 @@ Proof.
   reflexivity.
   intros. destruct n. reflexivity.
   apply IHm. intros. apply H. rewrite -> H0. reflexivity.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 (** [] *)
 

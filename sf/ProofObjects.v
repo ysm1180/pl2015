@@ -292,7 +292,8 @@ Definition beatiful_plus3'' : Prop :=
 (** Give a proof object corresponding to the theorem [b_times2] from Prop.v *)
 
 Definition b_times2': forall n, beautiful n -> beautiful (2*n) :=
-  (* FILL IN HERE *) admit.
+  fun (n : nat) => fun (H : beautiful n) =>
+    b_sum n (n + 0) H (b_sum n 0 H b_0).
 (** [] *)
 
 
@@ -301,7 +302,8 @@ Definition b_times2': forall n, beautiful n -> beautiful (2*n) :=
 (** Give a proof object corresponding to the theorem [gorgeous_plus13] from Prop.v *)
 
 Definition gorgeous_plus13_po: forall n, gorgeous n -> gorgeous (13+n):=
-   (* FILL IN HERE *) admit.
+  fun (n : nat) => fun (H : gorgeous n) =>
+  g_plus5 (8 + n) (g_plus5 (3 + n) (g_plus3 n H)).
 (** [] *)
 
 
@@ -378,7 +380,13 @@ we get: *)
 (** Construct a proof object demonstrating the following proposition. *)
 
 Definition conj_fact : forall P Q R, P /\ Q -> Q /\ R -> P /\ R :=
-  (* FILL IN HERE *) admit.
+  fun (P Q R : Prop) (H : P /\ Q) (H0 : Q /\ R) =>
+      match H with
+      | conj HP HQ =>
+          match H0 with
+          | conj HQ0 HR => conj P R HP HR
+          end
+      end.
 (** [] *)
 
 
@@ -393,7 +401,9 @@ Definition conj_fact : forall P Q R, P /\ Q -> Q /\ R -> P /\ R :=
 
 Definition beautiful_iff_gorgeous :
   forall n, beautiful n <-> gorgeous n :=
-  (* FILL IN HERE *) admit.
+  fun (n : nat) => 
+    conj (beautiful n -> gorgeous n) (gorgeous n -> beautiful n)
+    (beautiful__gorgeous n) (gorgeous__beautiful n).
 (** [] *)
 
 

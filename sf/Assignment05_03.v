@@ -15,11 +15,15 @@ Require Export Assignment05_02.
 Theorem iff_refl : forall P : Prop, 
   P <-> P.
 Proof. 
+<<<<<<< HEAD
   split.
   intros.
   apply H.
   intros.
   apply H.
+=======
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 
 

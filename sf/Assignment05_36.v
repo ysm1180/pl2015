@@ -4,6 +4,7 @@ Require Export Assignment05_35.
 
 Theorem ble_nat_true : forall n m,
   ble_nat n m = true -> n <= m.
+<<<<<<< HEAD
 Proof.
   intros.
   generalize dependent n.
@@ -16,5 +17,9 @@ Proof.
   apply n_le_m__Sn_le_Sm.
   apply IHm.
   apply H1.
+=======
+Proof. 
+  (* FILL IN HERE *) admit.
+>>>>>>> upstream/master
 Qed.
 
