@@ -9,13 +9,9 @@ Require Export Assignment05_00.
 Theorem proj2 : forall P Q : Prop, 
   P /\ Q -> Q.
 Proof.
-<<<<<<< HEAD
   intros.
   destruct H.
   apply H0.
-=======
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 (** [] *)
 

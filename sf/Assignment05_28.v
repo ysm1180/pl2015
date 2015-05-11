@@ -21,7 +21,6 @@ Require Export Assignment05_27.
 *)
 
 Inductive pal {X: Type} : list X -> Prop :=
-<<<<<<< HEAD
   | pal_nil : pal []
   | pal_one : forall (x : X), pal [x]
   | pal_x : forall (l : list X) (x : X), pal l -> pal (x :: l ++ [x]).
@@ -52,15 +51,10 @@ Proof.
   simpl. reflexivity.
   simpl. rewrite -> snoc_app. rewrite -> app_assoc. reflexivity.
 Qed.
-=======
-(* FILL IN HERE *)
-.
->>>>>>> upstream/master
 
 Theorem pal_app_rev: forall (X: Type) (l: list X),
   pal (l ++ rev l).
 Proof.
-<<<<<<< HEAD
   intros.
   induction l.
   simpl. apply pal_nil.
@@ -74,24 +68,17 @@ Proof.
   induction l.
   simpl. reflexivity.
   simpl. rewrite -> IHl. simpl. reflexivity.
-=======
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 
 Theorem pal_rev: forall (X: Type) (l: list X),
   pal l -> l = rev l.
 Proof.
-<<<<<<< HEAD
   intros.
   induction H.
   simpl. reflexivity.
   simpl. reflexivity.
   simpl. rewrite -> snoc_app. rewrite -> rev_list. simpl. rewrite <- IHpal.
   reflexivity.
-=======
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 
 (** [] *)

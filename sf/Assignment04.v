@@ -423,8 +423,6 @@ Qed.
 
 
 
-fold mult [1;2;3;4] 1
-
 
 
 (** **** Problem #10 (10 pts) : 2 stars (fold_length) *)

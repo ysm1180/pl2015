@@ -23,7 +23,6 @@ Check double_even.
 Check ev_sum.
 Check ev_ev__ev.
 
-<<<<<<< HEAD
 Lemma plus_assoc_2: forall n m p,
   n + m + p + (m + p) = n + ((m + p) + (m + p)).
 Proof.
@@ -42,12 +41,6 @@ Proof.
   rewrite <- double_plus. rewrite -> plus_assoc_2. rewrite <- double_plus.
   apply ev_sum.
   apply double_even. apply double_even. apply H0.
-=======
-Theorem ev_plus_plus : forall n m p,
-  ev (n+m) -> ev (n+p) -> ev (m+p).
-Proof.
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 (** [] *)
 

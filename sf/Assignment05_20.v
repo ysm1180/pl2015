@@ -12,7 +12,6 @@ Require Export Assignment05_19.
 (** 3 stars, advanced (beautiful__gorgeous)  *)
 Theorem beautiful__gorgeous : forall n, beautiful n -> gorgeous n.
 Proof.
-<<<<<<< HEAD
   intros.
   induction H.
   apply g_0.
@@ -21,9 +20,6 @@ Proof.
   apply gorgeous_sum.
   apply IHbeautiful1.
   apply IHbeautiful2.
-=======
- (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 (** [] *)
 

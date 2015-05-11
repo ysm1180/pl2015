@@ -1024,7 +1024,10 @@ Proof. reflexivity. Qed.
 Theorem override_example : forall (b:bool),
   (override (constfun b) 3 true) 2 = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  induction b.
+  reflexivity. reflexivity.
+Qed.
 (** [] *)
 
 (** We'll use function overriding heavily in parts of the rest of the
@@ -1091,7 +1094,12 @@ Theorem override_neq : forall (X:Type) x1 x2 k1 k2 (f : nat->X),
   beq_nat k2 k1 = false ->
   (override f k2 x2) k1 = x1.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  unfold override.
+  rewrite -> H0.
+  rewrite -> H.
+  reflexivity.
+Qed.
 (** [] *)
 
 (** As the inverse of [unfold], Coq also provides a tactic
@@ -1115,7 +1123,12 @@ Proof. reflexivity. Qed.
 
 Theorem fold_length_correct : forall X (l : list X),
   fold_length l = length l.
-(* FILL IN HERE *) Admitted.
+Proof.
+  intros.
+  induction l.
+  reflexivity.
+  simpl. rewrite <- IHl. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (fold_map)  *)
@@ -1123,7 +1136,7 @@ Theorem fold_length_correct : forall X (l : list X),
     below. *)
 
 Definition fold_map {X Y:Type} (f : X -> Y) (l : list X) : list Y :=
-(* FILL IN HERE *) admit.
+  fold (fun x y => f x :: y) l [].
 
 (** Write down a theorem [fold_map_correct] in Coq stating that
    [fold_map] is correct, and prove it. *)

@@ -5,7 +5,6 @@ Require Export Assignment05_31.
 Theorem Sn_le_Sm__n_le_m : forall n m,
   S n <= S m -> n <= m.
 Proof. 
-<<<<<<< HEAD
   intros.
   generalize dependent n.
   induction m.
@@ -18,8 +17,5 @@ Proof.
   assert (S n <= m).
   apply IHm. apply H2.
   apply le_S. apply H3.
-=======
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 

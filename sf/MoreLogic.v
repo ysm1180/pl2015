@@ -151,7 +151,18 @@ Qed.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* FILL IN HERE *) Admitted.
+  intros.
+  split.
+  intros.
+  inversion H.
+  destruct H0.
+  left. exists witness. apply H0.
+  right. exists witness. apply H0.
+  intros.
+  destruct H. inversion H.
+  exists witness. left. apply H0.
+  inversion H. exists witness. right. apply H0.
+Qed.
 (** [] *)
 
 (* ###################################################### *)

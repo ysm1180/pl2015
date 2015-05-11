@@ -5,7 +5,6 @@ Require Export Assignment05_38.
 Theorem ble_nat_false : forall n m,
   ble_nat n m = false -> ~(n <= m).
 Proof.
-<<<<<<< HEAD
   unfold not.
   intros.
   generalize dependent n.
@@ -18,9 +17,6 @@ Proof.
   inversion H.
   apply IHm in H2. inversion H2.
   apply Sn_le_Sm__n_le_m. apply H0.
-=======
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 (** [] *)
 

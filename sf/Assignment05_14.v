@@ -9,14 +9,10 @@ Require Export Assignment05_13.
 Theorem ev__even: forall n : nat,
   ev n -> even n.
 Proof.
-<<<<<<< HEAD
   intros.
   induction H.
   reflexivity.
   apply IHev.
-=======
-  (* FILL IN HERE *) admit.
->>>>>>> upstream/master
 Qed.
 (** [] *)
 
