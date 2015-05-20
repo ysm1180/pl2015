@@ -1022,7 +1022,12 @@ Theorem update_same : forall n1 x1 x2 (st : state),
   st x1 = n1 ->
   (update st x1 n1) x2 = st x2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  unfold update.
+  destruct (eq_id_dec x1 x2).
+  rewrite <- e. symmetry. assumption.
+  reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (update_permute)  *)
@@ -1108,7 +1113,9 @@ Example aexp1 :
   aeval (update empty_state X 5)
         (APlus (ANum 3) (AMult (AId X) (ANum 2)))
   = 13.
-Proof. reflexivity. Qed.
+Proof. 
+  unfold update.
+reflexivity. Qed.
 
 Example bexp1 :
   beval (update empty_state X 5)
@@ -1411,7 +1418,12 @@ Example ceval_example2:
     (X ::= ANum 0;; Y ::= ANum 1;; Z ::= ANum 2) / empty_state ||
     (update (update (update empty_state X 0) Y 1) Z 2).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply E_Seq with (update empty_state X 0).
+  apply E_Ass. reflexivity.
+  apply E_Seq with (update (update empty_state X 0) Y 1).
+  apply E_Ass. reflexivity.
+  apply E_Ass. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (pup_to_n)  *)
@@ -1421,15 +1433,33 @@ Proof.
    (this latter part is trickier than you might expect). *)
 
 Definition pup_to_n : com :=
-  (* FILL IN HERE *) admit.
+  Y ::= ANum 0;;
+  WHILE BNot (BEq (AId X) (ANum 0)) DO
+    Y ::= APlus (AId X) (AId Y);;
+    X ::= AMinus (AId X) (ANum 1) 
+  END.
 
 Theorem pup_to_2_ceval :
   pup_to_n / (update empty_state X 2) ||
     update (update (update (update (update (update empty_state
       X 2) Y 0) Y 2) X 1) Y 3) X 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  unfold pup_to_n.
+  apply E_Seq with (update (update empty_state X 2) Y 0).
+  apply E_Ass. reflexivity.
+  apply E_WhileLoop with (update (update (update (update empty_state X 2) Y 0) Y 2) X 1).
+  reflexivity.
+  apply E_Seq with (update (update (update empty_state X 2) Y 0) Y 2).
+  apply E_Ass. reflexivity.
+  apply E_Ass. reflexivity.
+  apply E_WhileLoop with (update (update (update (update (update (update empty_state X 2) Y 0) Y 2) X 1) Y 3) X 0).
+  reflexivity.
+  apply E_Seq with (update (update (update (update (update empty_state X 2) Y 0) Y 2) X 1) Y 3).
+  apply E_Ass. reflexivity.
+  apply E_Ass. reflexivity.
+  apply E_WhileEnd. reflexivity.
+Qed.
+  (** [] *)
 
 
 (* ####################################################### *)
@@ -1527,7 +1557,11 @@ Proof.
      [loopdef] terminates.  Most of the cases are immediately
      contradictory (and so can be solved in one step with
      [inversion]). *)
-  (* FILL IN HERE *) Admitted.
+  induction contra;
+  try inversion Heqloopdef.
+  subst. inversion H.
+  subst. inversion contra1. subst. apply IHcontra2. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (no_whilesR)  *)
@@ -1549,13 +1583,26 @@ Fixpoint no_whiles (c : com) : bool :=
     with [no_whiles]. *)
 
 Inductive no_whilesR: com -> Prop :=
- (* FILL IN HERE *)
+  | NW_Skip : no_whilesR SKIP
+  | NW_Ass : forall x a, no_whilesR (x ::= a)
+  | NW_Seq : forall (c1 c2 : com), no_whilesR c1 -> no_whilesR c2 -> no_whilesR (c1 ;; c2)
+  | NW_If : forall (b : bexp) (c1 c2 : com), no_whilesR c1 -> no_whilesR c2 -> no_whilesR (IFB b THEN c1 ELSE c2 FI)
   .
 
 Theorem no_whiles_eqv:
    forall c, no_whiles c = true <-> no_whilesR c.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  induction c; intros.
+  apply NW_Skip.
+  apply NW_Ass.
+  apply NW_Seq; try (try apply IHc1; try apply IHc2; simpl in H; apply andb_prop in H; destruct H; try apply H; try apply H0).
+  apply NW_If; try (try apply IHc1; try apply IHc2; simpl in H; apply andb_prop in H; destruct H; try apply H; try apply H0).
+  simpl in H. inversion H.
+
+  intros. induction H; try reflexivity;
+  try (simpl; apply andb_true_intro; split; try apply IHno_whilesR1; try apply IHno_whilesR2).
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars (no_whiles_terminating)  *)
@@ -1629,27 +1676,76 @@ Inductive sinstr : Type :=
 Fixpoint s_execute (st : state) (stack : list nat)
                    (prog : list sinstr)
                  : list nat :=
-(* FILL IN HERE *) admit.
-
-
+                 let newstack :=
+                   match prog with
+                   | [] => stack
+                   | (SPush n)::_ => n::stack
+                   | (SLoad id)::_ => (st id)::stack
+                   | SPlus::_ => match stack with
+                   | n::(m::rest) => (m+n)::rest
+                   | _ => stack
+                   end
+                   | SMinus::_ => match stack with
+                   | n::m::rest => (m-n)::rest
+                   | _ => stack
+                   end
+                   | SMult::_ => match stack with
+                   | n::m::rest => (m*n)::rest
+                   | _ => stack
+                   end
+                   end in
+                   match prog with
+                   | [] => stack
+                   | instr::rest => s_execute st newstack rest
+                   end.
+(*                 match prog with
+                 | [] => stack
+                 | h :: t =>
+                     match h with
+                     | SPush n => s_execute st (n :: stack) t
+                     | SLoad x => s_execute st (st x :: stack) t
+                     | SPlus =>
+                        match stack with
+                        | n :: m :: stack' => s_execute st ((n + m) :: stack') t
+                        | _ => s_execute st stack t
+                        end
+                     | SMinus =>
+                        match stack with
+                        | n :: m :: stack' => s_execute st ((m - n) :: stack') t
+                        | _ => s_execute st stack t
+                        end
+                     | SMult =>
+                        match stack with
+                        | n :: m :: stack' => s_execute st ((n * m) :: stack') t
+                        | _ => s_execute st stack t
+                        end
+                     end
+                 end.
+*)
 Example s_execute1 :
      s_execute empty_state []
        [SPush 5; SPush 3; SPush 1; SMinus]
    = [2; 5].
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example s_execute2 :
      s_execute (update empty_state X 3) [3;4]
        [SPush 4; SLoad X; SMult; SPlus]
    = [15; 4].
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 (** Next, write a function which compiles an [aexp] into a stack
     machine program. The effect of running the program should be the
     same as pushing the value of the expression on the stack. *)
 
 Fixpoint s_compile (e : aexp) : list sinstr :=
-(* FILL IN HERE *) admit.
+  match e with
+  | ANum n => [SPush n]
+  | AId x => [SLoad x]
+  | APlus a1 a2 => (s_compile a1) ++ (s_compile a2) ++ [SPlus]
+  | AMinus a1 a2 => (s_compile a1) ++ (s_compile a2) ++ [SMinus]
+  | AMult a1 a2 => (s_compile a1) ++ (s_compile a2) ++ [SMult]
+  end.
 
 (** After you've defined [s_compile], prove the following to test
     that it works. *)
@@ -1657,7 +1753,7 @@ Fixpoint s_compile (e : aexp) : list sinstr :=
 Example s_compile1 :
     s_compile (AMinus (AId X) (AMult (ANum 2) (AId Y)))
   = [SLoad X; SPush 2; SLoad Y; SMult; SMinus].
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (stack_compiler_correct)  *)
@@ -1674,11 +1770,28 @@ Example s_compile1 :
     general lemma to get a usable induction hypothesis; the main
     theorem will then be a simple corollary of this lemma. *)
 
+Lemma s_execute_app : forall (st : state) s1 s2 stack,
+  s_execute st stack (s1 ++ s2) = s_execute st (s_execute st stack s1) s2.
+Proof.
+  intros st s1.
+  induction s1. intros. reflexivity.
+  intros. simpl. apply IHs1.
+Qed.
+
+Theorem s_compile_all : forall (st : state) (e : aexp) (stack : list nat),
+  s_execute st stack (s_compile e) = aeval st e :: stack.
+Proof.
+  intros st e.
+  induction e; try (intros; reflexivity);
+  try (intros; simpl; rewrite s_execute_app; rewrite s_execute_app; rewrite IHe1; rewrite IHe2; reflexivity).
+Qed.
 
 Theorem s_compile_correct : forall (st : state) (e : aexp),
   s_execute st [] (s_compile e) = [ aeval st e ].
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  apply s_compile_all.
+Qed.
 (** [] *)
 
 (** **** Exercise: 5 stars, advanced (break_imp)  *)

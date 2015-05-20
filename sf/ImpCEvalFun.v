@@ -326,7 +326,23 @@ Theorem ceval__ceval_step: forall c st st',
 Proof. 
   intros c st st' Hce.
   ceval_cases (induction Hce) Case.
-  (* FILL IN HERE *) Admitted.
+  exists 1. reflexivity.
+  exists 1. simpl. rewrite H. reflexivity.
+  inversion IHHce1. inversion IHHce2.
+  exists (S x + x0). simpl.
+  apply ceval_step_more with (i2 := x + x0) in H.
+  rewrite H.
+  apply ceval_step_more with (i2 := x + x0) in H0.
+  apply H0. omega. omega.
+  inversion IHHce. exists (S x). simpl. rewrite H. apply H0.
+  inversion IHHce. exists (S x). simpl. rewrite H. apply H0.
+  exists 1. simpl. rewrite H. reflexivity.
+  inversion IHHce1. inversion IHHce2.
+  exists (S x + x0). simpl.
+  rewrite H. apply ceval_step_more with (i2 := x + x0) in H0.
+  rewrite H0. apply ceval_step_more with (i2 := x + x0) in H1.
+  apply H1. omega. omega.
+Qed.
 (** [] *)
 
 Theorem ceval_and_ceval_step_coincide: forall c st st',

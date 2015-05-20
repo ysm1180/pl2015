@@ -172,7 +172,7 @@ Proof.
   intros c st st'.
   split; intros H.
   Case "->". 
-    inversion H. subst. 
+    inversion H. subst.
     inversion H2. subst. 
     assumption.
   Case "<-". 
@@ -189,8 +189,12 @@ Theorem skip_right: forall c,
   cequiv 
     (c;; SKIP) 
     c.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof.
+  intros c st st'.
+  split; intros.
+  inversion H. subst. inversion H5. subst. assumption.
+  apply E_Seq with st'. assumption. apply E_Skip.
+Qed.
 (** [] *)
 
 (** Similarly, here is a simple transformations that simplifies [IFB]
@@ -281,7 +285,13 @@ Theorem IFB_false: forall b c1 c2,
     (IFB b THEN c1 ELSE c2 FI) 
     c2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  split; intros.
+  inversion H0; subst. 
+  unfold bequiv in H. simpl in H. rewrite H in H6. inversion H6.
+  assumption.
+  apply E_IfFalse. unfold bequiv in H. simpl in H. apply H. assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (swap_if_branches)  *)
@@ -293,7 +303,19 @@ Theorem swap_if_branches: forall b e1 e2,
     (IFB b THEN e1 ELSE e2 FI)
     (IFB BNot b THEN e2 ELSE e1 FI).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  split; intros.
+  inversion H; subst. 
+  apply E_IfFalse. simpl. rewrite H5. reflexivity.
+  assumption.
+  apply E_IfTrue. simpl. rewrite H5. reflexivity.
+  assumption.
+  inversion H; subst.
+  apply E_IfFalse. simpl in H5. unfold negb in H5. 
+  destruct (beval st b). inversion H5. reflexivity. assumption.
+  subst. apply E_IfTrue. simpl in H5. unfold negb in H5.
+  destruct (beval st b). reflexivity. inversion H5. assumption.
+Qed.
 (** [] *)
 
 (** *** *)
@@ -392,8 +414,13 @@ Theorem WHILE_true: forall b c,
      cequiv 
        (WHILE b DO c END)
        (WHILE BTrue DO SKIP END).
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof.
+  intros.
+  split; intros.
+  destruct (WHILE_true_nonterm b c st st' H). assumption.
+  destruct (WHILE_true_nonterm BTrue SKIP st st'). unfold bequiv.
+  reflexivity. assumption. 
+Qed.
 (** [] *)
 
 Theorem loop_unrolling: forall b c,
@@ -424,7 +451,14 @@ Proof.
 Theorem seq_assoc : forall c1 c2 c3,
   cequiv ((c1;;c2);;c3) (c1;;(c2;;c3)).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  split; intros.
+  inversion H; subst. inversion H2; subst.
+  apply E_Seq with st'1. assumption. 
+  apply E_Seq with st'0. assumption. assumption.
+  inversion H; subst. inversion H5; subst.
+  apply E_Seq with st'1. apply E_Seq with st'0; assumption. assumption.
+Qed.
 (** [] *)
 
 (** ** The Functional Equivalence Axiom *)
@@ -521,7 +555,21 @@ Theorem assign_aequiv : forall X e,
   aequiv (AId X) e -> 
   cequiv SKIP (X ::= e).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  split; intros.
+  unfold aequiv in H. simpl in H.
+  inversion H0; subst.
+  assert (st' = update st' X (aeval st' e)).
+    apply functional_extensionality.
+    intro. rewrite <- H. rewrite update_same; reflexivity.
+    rewrite H1 at 2. apply E_Ass. reflexivity.
+  unfold aequiv in H. simpl in H.
+  inversion H0; subst.
+  replace (update st X (aeval st e)) with st.
+  constructor.
+  apply functional_extensionality. intro.
+  rewrite <- H. rewrite update_same; reflexivity.
+Qed.
 (** [] *)
 
 (* ####################################################### *)
@@ -713,8 +761,19 @@ Proof.
 Theorem CSeq_congruence : forall c1 c1' c2 c2',
   cequiv c1 c1' -> cequiv c2 c2' ->
   cequiv (c1;;c2) (c1';;c2').
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof.
+  unfold cequiv.
+  intros.
+  split; intros.
+  inversion H1; subst.
+  apply E_Seq with st'0.
+  rewrite <- H. assumption.
+  rewrite <- H0. assumption.
+  inversion H1; subst.
+  apply E_Seq with st'0.
+  rewrite H. assumption.
+  rewrite H0. assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (CIf_congruence)  *)
@@ -722,7 +781,20 @@ Theorem CIf_congruence : forall b b' c1 c1' c2 c2',
   bequiv b b' -> cequiv c1 c1' -> cequiv c2 c2' ->
   cequiv (IFB b THEN c1 ELSE c2 FI) (IFB b' THEN c1' ELSE c2' FI).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold bequiv, cequiv.
+  intros.
+  split; intros.
+  inversion H2; subst.
+  apply E_IfTrue. rewrite <- H. assumption.
+  rewrite <- H0. assumption.
+  subst. apply E_IfFalse. rewrite <- H. assumption.
+  rewrite <- H1. assumption.
+  inversion H2; subst.
+  apply E_IfTrue. rewrite H. assumption.
+  rewrite H0. assumption.
+  apply E_IfFalse. rewrite H. assumption.
+  rewrite H1. assumption.
+Qed.
 (** [] *)
 
 (** *** *)
