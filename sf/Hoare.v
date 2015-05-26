@@ -468,7 +468,15 @@ Theorem hoare_asgn_fwd :
   {{fun st => P (update st X m) /\ st X = aeval (update st X m) a }}.
 Proof.
   intros functional_extensionality m a P.
-  (* FILL IN HERE *) Admitted.
+  unfold hoare_triple. intros.
+  destruct H0. inversion H. subst. 
+  assert (st = update (update st X (aeval st a)) X (st X)).
+    apply functional_extensionality. intros.
+    rewrite update_shadow. rewrite update_same. reflexivity. reflexivity.
+  rewrite <- H1. split. apply H0.
+  reflexivity.
+Qed.
+ 
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (hoare_asgn_fwd_exists)  *)
@@ -493,7 +501,16 @@ Theorem hoare_asgn_fwd_exists :
                 st X = aeval (update st X m) a }}.
 Proof.
   intros functional_extensionality a P.
-  (* FILL IN HERE *) Admitted.
+  unfold hoare_triple. intros.
+  inversion H. subst.
+  exists (st X).
+  assert (st = (update (update st X (aeval st a)) X (st X))).
+    apply functional_extensionality.
+    intros. rewrite update_shadow. rewrite update_same. reflexivity. reflexivity.
+  split. rewrite <- H1. apply H0.
+  rewrite <- H1. reflexivity.
+Qed.
+
 (** [] *)
 
 (* ####################################################### *) 
@@ -809,7 +826,12 @@ Example hoare_asgn_example4 :
   {{fun st => True}} (X ::= (ANum 1);; Y ::= (ANum 2)) 
   {{fun st => st X = 1 /\ st Y = 2}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eapply hoare_seq. apply hoare_asgn.
+  eapply hoare_consequence_pre. apply hoare_asgn.
+  intros st H. unfold assn_sub. simpl. split.
+  unfold update. simpl. reflexivity.
+  unfold update. simpl. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars (swap_exercise)  *)
@@ -820,14 +842,21 @@ Proof.
 *)
 
 Definition swap_program : com :=
-  (* FILL IN HERE *) admit.
+  Z ::= AId X;; X ::= AId Y;; Y ::= AId Z.
 
 Theorem swap_exercise :
   {{fun st => st X <= st Y}} 
   swap_program
   {{fun st => st Y <= st X}}.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold swap_program. eapply hoare_seq. eapply hoare_seq.
+  apply hoare_asgn. apply hoare_asgn.
+  eapply hoare_consequence_pre. apply hoare_asgn.
+  intros st H. unfold assn_sub. simpl.
+  unfold update. simpl. assumption.
+Qed.
+  
+
 (** [] *)
 
 (** **** Exercise: 3 stars (hoarestate1)  *)
@@ -1013,7 +1042,16 @@ Theorem if_minus_plus :
   FI
   {{fun st => st Y = st X + st Z}}. 
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eapply hoare_if.
+  eapply hoare_consequence_pre.
+  apply hoare_asgn.
+  unfold bassn, assn_sub, update, assert_implies.
+  simpl. intros st [_ H]. apply ble_nat_true in H. omega.
+  eapply hoare_consequence_pre. apply hoare_asgn.
+  unfold assn_sub, update, assert_implies.
+  simpl. intros. omega.
+Qed.
+  
 
 (* ####################################################### *)
 (** *** Exercise: One-sided conditionals *)

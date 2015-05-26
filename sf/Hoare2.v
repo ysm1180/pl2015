@@ -513,12 +513,17 @@ Proof.
     the variable [Y] is to start [Y] at [0], then decrement [X] until
     it hits [0], incrementing [Y] at each step. Here is a program that
     implements this idea:
-      {{ X = m }}
+      {{ 0 + X = m }}
     Y ::= 0;;
+      {{ Y + X = m }}
     WHILE X <> 0 DO
+      {{ X <> 0 /\ Y + X = m }} ->> {{ (Y + 1) + (X - 1) = m }} 
       X ::= X - 1;;
+      {{ (Y + 1) + X = m }}
       Y ::= Y + 1
+      {{ Y + X = m }}
     END
+      {{ X = 0 /\ Y + X = m }} ->>
       {{ Y = m }}
     Write an informal decorated program showing that this is correct. *)
 
@@ -532,16 +537,22 @@ Proof.
 (** **** Exercise: 3 stars, optional (add_slowly_decoration)  *)
 (** The following program adds the variable X into the variable Z
     by repeatedly decrementing X and incrementing Z.
+    {{ True }}
   WHILE X <> 0 DO
+    {{ True /\ X <> 0 }} ->> {{ True }}
+    {{ True }}
      Z ::= Z + 1;;
+     {{ True }}
      X ::= X - 1
+     {{ True }}
   END
+    {{ True }}
+
 
     Following the pattern of the [subtract_slowly] example above, pick
     a precondition and postcondition that give an appropriate
     specification of [add_slowly]; then (informally) decorate the
     program accordingly. *)
-
 (* FILL IN HERE *)
 (** [] *)
 
@@ -976,7 +987,17 @@ Theorem is_wp_example :
   is_wp (fun st => st Y <= 4)
     (X ::= APlus (AId Y) (ANum 1)) (fun st => st X <= 5).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold is_wp. split.
+  eapply hoare_consequence_pre. apply hoare_asgn.
+  unfold assn_sub, update, assert_implies. intros. simpl. omega.
+  unfold assert_implies. simpl. intros. unfold hoare_triple in H.
+  remember (update st X (st Y + 1)) as st'.
+  assert ((X ::= APlus (AId Y) (ANum 1)) / st || st').
+    subst. constructor. reflexivity.
+  apply H in H1. rewrite Heqst' in H1. unfold update in H1. simpl in H1. omega.
+  assumption.
+Qed.
+  
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (hoare_asgn_weakest)  *)
