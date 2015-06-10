@@ -14,7 +14,10 @@ Require Export Assignment11_01.
 Lemma value_is_nf : forall t,
   value t -> step_normal_form t.
 Proof.
-  exact FILL_IN_HERE.
+  intros. unfold normal_form. unfold not.
+  induction H. inversion H; subst; intros; inversion H0; inversion H1. 
+  induction H. intros. inversion H. inversion H0.
+  intros. destruct H0. inversion H0. subst. apply IHnvalue. exists t1'. apply H2.
 Qed.
 
 (*-- Check --*)

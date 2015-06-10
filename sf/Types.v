@@ -185,7 +185,12 @@ Hint Unfold stuck.
 Example some_term_is_stuck :
   exists t, stuck t.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  exists (tsucc ttrue). unfold stuck.
+  split.
+  unfold normal_form. unfold not. intros.
+  destruct H. inversion H. subst. inversion H1.
+  unfold not. intros. inversion H. inversion H0. inversion H0. subst. inversion H2.
+Qed.
 (** [] *)
 
 (** However, although values and normal forms are not the same in this
@@ -205,7 +210,11 @@ Proof.
 Lemma value_is_nf : forall t,
   value t -> step_normal_form t.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. unfold normal_form. unfold not.
+  induction H. inversion H; subst; intros; inversion H0; inversion H1. 
+  induction H. intros. inversion H. inversion H0.
+  intros. destruct H0. inversion H0. subst. apply IHnvalue. exists t1'. apply H2.
+Qed.
 (** [] *)
 
 
@@ -216,7 +225,39 @@ Proof.
 Theorem step_deterministic:
   deterministic step.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  unfold deterministic. intros. generalize dependent y2.
+  step_cases (induction H) Case; intros...
+  inversion H0. subst. reflexivity. inversion H4.
+  inversion H0. subst. reflexivity. inversion H4.
+  inversion H0. subst. inversion H. subst. inversion H. subst.
+  apply IHstep in H5. rewrite H5. reflexivity.
+  inversion H0. subst. apply IHstep in H2. subst. reflexivity.
+  inversion H0. reflexivity. inversion H1.
+  inversion H0. reflexivity. subst. inversion H2. subst.
+  assert (value t1). unfold value. right. assumption.
+  apply value_is_nf in H1. unfold normal_form in H1. unfold not in H1.
+  apply ex_falso_quodlibet. apply H1. exists t1'0. assumption.
+  inversion H0; subst. inversion H. subst.
+  inversion H. subst.
+  assert (value y2). auto.
+  apply value_is_nf in H1. unfold normal_form in H1. unfold not in H1.
+  apply ex_falso_quodlibet. apply H1. exists t1'0. assumption.
+  subst. apply IHstep in H2. rewrite H2. reflexivity.
+  inversion H0. reflexivity. subst. inversion H1.
+  inversion H0. reflexivity. subst. inversion H2. subst.
+  assert (value t1). auto.
+  apply value_is_nf in H1. unfold normal_form, not in H1.
+  apply ex_falso_quodlibet. apply H1. exists t1'0. assumption.
+  inversion H0; subst.
+  inversion H.
+  inversion H. subst.
+  assert (value t0). auto.
+  apply value_is_nf in H1. unfold normal_form, not in H1.
+  apply ex_falso_quodlibet. apply H1. exists t1'0. assumption.
+  apply IHstep in H2. rewrite H2. reflexivity.
+Qed.
+  
+
 (** [] *)
 
 
