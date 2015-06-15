@@ -28,12 +28,18 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 =======
 =======
 =======
 | 2015/06/04 14:00 	| [Assignment 11](sf/Assignment11_00.v) ([status](https://github.com/snu-sf/pl2015/issues/136)) 	|       	|
+=======
+| 2015/06/18 14:00 	| Assignment 13 	|       	|
+| 2015/06/18 14:00 	| Assignment 12  	|       	|
+| 2015/06/11 14:00 	| [Assignment 11](sf/Assignment11_00.v) ([status](https://github.com/snu-sf/pl2015/issues/136)) 	|       	|
+>>>>>>> upstream/master
 | 2015/06/04 14:00 	| [Assignment 10](sf/Assignment10_00.v) ([status](https://github.com/snu-sf/pl2015/issues/135)) 	|       	|
 >>>>>>> upstream/master
 | 2015/05/28 14:00 	| [Assignment 09](sf/Assignment09_00.v) ([status](https://github.com/snu-sf/pl2015/issues/119)) 	|       	|
