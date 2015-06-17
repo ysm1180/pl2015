@@ -1537,6 +1537,7 @@ Definition fact :=
               (tvar a) 
               (tapp (tvar f) (tpred (tvar a))))))).
 
+Eval compute in fact.
 (** (Warning: you may be able to typecheck [fact] but still have some
     rules wrong!) *)
 

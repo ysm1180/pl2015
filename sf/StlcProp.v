@@ -575,7 +575,13 @@ Proof.
   intros t t' T Hhas_type Hmulti. unfold stuck.
   intros [Hnf Hnot_val]. unfold normal_form in Hnf.
   induction Hmulti.
-  (* FILL IN HERE *) Admitted.
+  assert (value x0 \/ exists t', x0 ==> t').
+    eapply progress. eauto.
+  inversion Hhas_type; subst; auto; try (solve by inversion).
+  apply Hnf. inversion H. inversion H2. auto.
+  inversion H. inversion H3. apply Hnf. auto.
+  apply IHHmulti; auto. eapply preservation. apply Hhas_type. apply H.
+Qed.
 
 (* ###################################################################### *)
 (** * Uniqueness of Types *)
