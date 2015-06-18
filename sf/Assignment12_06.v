@@ -90,20 +90,30 @@ Qed.
 Lemma wow : forall p q r t,
   p ==>* t -> p ==> q -> q ==> r -> r ==> p -> (t = p \/ t = q \/ t = r).
 Proof.
-  intros. inversion H. auto. subst. inversion H4. subst.
-  right. left. eapply determin_step. apply H3. auto.
-  subst. inversion H6. subst. assert (y = q). eapply determin_step. apply H3. auto.
-  subst. right. right. eapply determin_step. apply H5. auto. subst.
-Admitted.
-
+  intros. generalize dependent q. generalize dependent r. induction H. intros. auto.
+  intros.
+  assert (y = q). eapply determin_step. apply H. auto.
+  subst. assert (z = q \/ z = r \/ z = x).
+    apply IHmulti; auto.
+  destruct H4. auto. destruct H4. auto. auto.
+Qed.
 
 Theorem tloop_diverges:
   ~ exists t, tapp tloop (tnat 0) ==>* t /\ normal_form step t.
 Proof.
   unfold tloop. intros Hc. destruct Hc. destruct H.
-  inversion H. clear H. subst. apply H0. eexists. apply ST_AppFix. auto. auto.
-  subst.
-  exact FILL_IN_HERE.
+  remember (tapp (tfix (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X))))) (tnat 0)) as t1.
+  remember (tapp (tapp (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X))))  (tfix (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X)))))) (tnat 0)) as t2.
+  remember (tapp ([Loop:=(tfix (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X)))))](tabs X TNat (tapp (tvar Loop) (tvar X)))) (tnat 0)) as t3.
+  apply wow with (p := t1) (q := t2) (r := t3) in H.
+  apply H0. destruct H. rewrite H. exists t2. subst. auto.
+  destruct H. rewrite H. exists t3. subst. auto.
+  rewrite H. exists t1. 
+  assert (t1 = ([X:=(tnat 0)] (tapp (tfix (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X))))) (tvar X)))).
+  auto. subst. simpl.  rewrite H1. auto. subst. eauto. subst. eauto. subst.
+  simpl. auto.
+  assert ((tapp (tfix (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X))))) (tnat 0))
+  = ([X:=(tnat 0)] (tapp (tfix (tabs Loop (TArrow TNat TNat) (tabs X TNat (tapp (tvar Loop) (tvar X))))) (tvar X)))). auto. rewrite H1. auto.
 Qed.
 
 (*-- Check --*)
